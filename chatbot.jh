@@ -12,6 +12,11 @@ entity Creneaux {
 	dateDebut Instant required,
     dateFin Instant 
 }
+entity Utilisateur {
+	dateDebut Instant required,
+    dateFin Instant 
+}
+
 
 /**
  * Task entity.
@@ -28,7 +33,7 @@ relationship OneToOne {
 
 // defining multiple OneToMany relationships with comments
 relationship OneToMany {
-	User{enevements(titre)} to Evenement{employee(utilisateur)},
+	Utilisateur{evenements} to Evenement{employee(utilisateur)},
 
 }
 
