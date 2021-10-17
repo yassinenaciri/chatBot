@@ -28,7 +28,7 @@ relationship OneToOne {
 
 // defining multiple OneToMany relationships with comments
 relationship OneToMany {
-	User{enevements(titre)} to Evenement{employee(utilisateur)},
+	User to Evenement{employee(utilisateur)},
 
 }
 
