@@ -1,0 +1,47 @@
+
+entity Evenement {
+    titre String required
+	description String,
+    localisation String,
+}
+
+
+
+
+entity Creneaux {
+	dateDebut Instant required,
+    dateFin Instant 
+}
+
+/**
+ * Task entity.
+ * @author The JHipster team.
+ */
+
+
+
+relationship OneToOne {
+    Evenement{creneaux} to Creneaux,
+ }
+
+
+
+// defining multiple OneToMany relationships with comments
+relationship OneToMany {
+	User{enevements(titre)} to Evenement{employee(utilisateur)},
+
+}
+
+
+
+// Set pagination options
+
+
+// Use Data Transfer Objects (DTO)
+// dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl 
+
+// Set an angular suffix
+// angularSuffix * with mySuffix
