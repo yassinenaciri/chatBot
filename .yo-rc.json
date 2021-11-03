@@ -42,8 +42,6 @@
     "devServerPort": 4200,
     "clientPackageManager": "npm",
     "clientThemeVariant": "",
-    "languages": ["en", "fr"],
-    "entities": ["Evenement", "Creneaux", "Utilisateur"],
-    "lastLiquibaseTimestamp": 1635937226000
+    "languages": ["en", "fr"]
   }
 }
