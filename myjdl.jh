@@ -1,0 +1,28 @@
+
+entity Utilisateur {
+	nomComplet String required,
+}
+
+entity Tache {
+	intitule String required,
+	description String required,
+    dateDebut Instant,
+    dateFin Instant,
+}
+
+
+
+
+// defining multiple OneToMany relationships with comments
+relationship OneToOne {   
+    Utilisateur{compte(email)} to User,	
+}
+
+relationship ManyToOne {
+Tache{utilisateur(nomComplet)} to Utilisateur{taches } ,
+
+}
+
+
+
+service all with serviceImpl 
