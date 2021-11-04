@@ -1,8 +1,6 @@
 <nav data-cy="navbar" class="navbar navbar-dark navbar-expand-md bg-dark">
   <a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
-    <span class="logo-img"></span>
-    <span class="navbar-title">JhipAngular</span>
-    <span class="navbar-version">{{ version }}</span>
+    <span class="navbar-title">Scheduler</span>
   </a>
   <a
     class="navbar-toggler d-lg-none"
@@ -35,12 +33,6 @@
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
       >
-        <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="entity-menu" data-cy="entity">
-          <span>
-            <fa-icon icon="th-list"></fa-icon>
-            <span>Entities</span>
-          </span>
-        </a>
         <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
           <li>
             <a

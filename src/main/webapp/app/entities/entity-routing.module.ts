@@ -14,7 +14,6 @@ import { RouterModule } from '@angular/router';
         data: { pageTitle: 'Taches' },
         loadChildren: () => import('./tache/tache.module').then(m => m.TacheModule),
       },
-      /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),
   ],
 })

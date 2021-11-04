@@ -8,7 +8,6 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { NgxWebstorageModule } from 'ngx-webstorage';
 import * as dayjs from 'dayjs';
 import { NgbDateAdapter, NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
-
 import { SERVER_API_URL } from './app.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import './config/dayjs';
@@ -25,16 +24,21 @@ import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { FooterComponent } from './layouts/footer/footer.component';
 import { PageRibbonComponent } from './layouts/profiles/page-ribbon.component';
 import { ErrorComponent } from './layouts/error/error.component';
+import { UtilisateurComponent } from './entities/utilisateur/list/utilisateur.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ChatModule } from '@progress/kendo-angular-conversational-ui';
+import { ChatComponent } from './chatBot/chat.component';
 
 @NgModule({
   imports: [
     BrowserModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    ChatModule,
     SharedModule,
     HomeModule,
-    // jhipster-needle-angular-add-module JHipster will add new module here
     EntityRoutingModule,
     AppRoutingModule,
-    // Set this to true to enable service worker (PWA)
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: false }),
     HttpClientModule,
     NgxWebstorageModule.forRoot({ prefix: 'jhi', separator: '-', caseSensitive: true }),
@@ -46,7 +50,7 @@ import { ErrorComponent } from './layouts/error/error.component';
     httpInterceptorProviders,
   ],
   declarations: [MainComponent, NavbarComponent, ErrorComponent, PageRibbonComponent, FooterComponent],
-  bootstrap: [MainComponent],
+  bootstrap: [MainComponent, UtilisateurComponent],
 })
 export class AppModule {
   constructor(applicationConfigService: ApplicationConfigService, iconLibrary: FaIconLibrary, dpConfig: NgbDatepickerConfig) {

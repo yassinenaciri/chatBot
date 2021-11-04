@@ -1,51 +1,73 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpResponse } from '@angular/common/http';
+
+import { Subject, from, merge, Observable } from 'rxjs';
+import { switchMap, map, windowCount, scan, take, tap, publish } from 'rxjs/operators';
+
+import { ChatModule, Message, User, Action, ExecuteActionEvent, SendMessageEvent } from '@progress/kendo-angular-conversational-ui';
+import { UtilisateurService } from '../service/utilisateur.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { IUtilisateur } from '../utilisateur.model';
-import { UtilisateurService } from '../service/utilisateur.service';
-import { UtilisateurDeleteDialogComponent } from '../delete/utilisateur-delete-dialog.component';
-
 @Component({
+  providers: [UtilisateurService],
   selector: 'jhi-utilisateur',
-  templateUrl: './utilisateur.component.html',
+  template: ` <kendo-chat [messages]="messages" [user]="user" (sendMessage)="sendMessage($event)"> </kendo-chat> `,
 })
-export class UtilisateurComponent implements OnInit {
-  utilisateurs?: IUtilisateur[];
-  isLoading = false;
+export class UtilisateurComponent {
+  public feed: Observable<Message[]>;
 
-  constructor(protected utilisateurService: UtilisateurService, protected modalService: NgbModal) {}
+  public readonly user: User = {
+    id: 1,
+  };
 
-  loadAll(): void {
-    this.isLoading = true;
+  public readonly bot: User = {
+    id: 0,
+  };
+  public messages: Message[] = [{ author: this.bot, text: 'yy' }];
+  private local: Subject<Message> = new Subject<Message>();
 
-    this.utilisateurService.query().subscribe(
-      (res: HttpResponse<IUtilisateur[]>) => {
-        this.isLoading = false;
-        this.utilisateurs = res.body ?? [];
-      },
-      () => {
-        this.isLoading = false;
-      }
+  constructor(private svc: UtilisateurService) {
+    const hello: Message = {
+      author: this.bot,
+      suggestedActions: [
+        {
+          type: 'reply',
+          value: 'Neat!',
+        },
+        {
+          type: 'reply',
+          value: 'Thanks, but this is boring.',
+        },
+      ],
+      timestamp: new Date(),
+      text: 'Hello, this is a demo bot. I don`t do much, but I can count symbols!',
+    };
+
+    // Merge local and remote messages into a single stream
+    this.feed = merge(
+      from([hello]),
+      this.local,
+      this.svc.responses.pipe(
+        map(
+          (response: any): Message => ({
+            author: this.bot,
+            text: response,
+          })
+        )
+      )
+    ).pipe(
+      // ... and emit an array of all messages
+      scan((acc: Message[], x: Message) => [...acc, x], [])
     );
   }
 
-  ngOnInit(): void {
-    this.loadAll();
-  }
+  public sendMessage(e: SendMessageEvent): void {
+    this.local.next(e.message);
 
-  trackId(index: number, item: IUtilisateur): string {
-    return item.id!;
-  }
-
-  delete(utilisateur: IUtilisateur): void {
-    const modalRef = this.modalService.open(UtilisateurDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
-    modalRef.componentInstance.utilisateur = utilisateur;
-    // unsubscribe not needed because closed completes on modal close
-    modalRef.closed.subscribe(reason => {
-      if (reason === 'deleted') {
-        this.loadAll();
-      }
+    this.local.next({
+      author: this.bot,
+      typing: true,
     });
+
+    this.svc.submit('e.message.text');
   }
 }

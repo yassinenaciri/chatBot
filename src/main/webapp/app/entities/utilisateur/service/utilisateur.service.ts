@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
@@ -12,8 +12,8 @@ export type EntityArrayResponseType = HttpResponse<IUtilisateur[]>;
 
 @Injectable({ providedIn: 'root' })
 export class UtilisateurService {
+  public readonly responses: Subject<string> = new Subject<string>();
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/utilisateurs');
-
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
   create(utilisateur: IUtilisateur): Observable<EntityResponseType> {
@@ -24,6 +24,13 @@ export class UtilisateurService {
     return this.http.put<IUtilisateur>(`${this.resourceUrl}/${getUtilisateurIdentifier(utilisateur) as string}`, utilisateur, {
       observe: 'response',
     });
+  }
+
+  public submit(question: string): void {
+    const length = question.length;
+    const answer = `"${question}" contains exactly ${length} symbols.`;
+
+    setTimeout(() => this.responses.next(answer), 1000);
   }
 
   partialUpdate(utilisateur: IUtilisateur): Observable<EntityResponseType> {

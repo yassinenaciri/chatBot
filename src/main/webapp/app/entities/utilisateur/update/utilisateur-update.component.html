@@ -34,7 +34,7 @@
               [ngValue]="userOption.id === editForm.get('compte')!.value?.id ? editForm.get('compte')!.value : userOption"
               *ngFor="let userOption of usersSharedCollection; trackBy: trackUserById"
             >
-              {{ userOption.email }}
+              {{ userOption.login }}
             </option>
           </select>
         </div>
