@@ -51,7 +51,7 @@ import { chatModule } from './chatBot/chat.module';
     httpInterceptorProviders,
   ],
   declarations: [MainComponent, NavbarComponent, ErrorComponent, PageRibbonComponent, FooterComponent],
-  bootstrap: [MainComponent, UtilisateurComponent],
+  bootstrap: [MainComponent],
 })
 export class AppModule {
   constructor(applicationConfigService: ApplicationConfigService, iconLibrary: FaIconLibrary, dpConfig: NgbDatepickerConfig) {

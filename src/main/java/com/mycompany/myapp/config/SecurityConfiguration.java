@@ -92,6 +92,7 @@ public class SecurityConfiguration {
         .and()
             .authorizeExchange()
             .pathMatchers("/").permitAll()
+            .pathMatchers("/api/chat").permitAll()
             .pathMatchers("/*.*").permitAll()
             .pathMatchers("/api/authenticate").permitAll()
             .pathMatchers("/api/register").permitAll()

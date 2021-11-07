@@ -20,15 +20,25 @@ import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.util.*;
 import opennlp.tools.util.model.ModelUtil;
+import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import tech.jhipster.web.util.HeaderUtil;
 
 @RestController
 @RequestMapping("/api")
 public class ChatResource {
 
+    private final Logger log = LoggerFactory.getLogger(TacheResource.class);
     private static Map<String, String> questionAnswer = new HashMap<>();
+
+    @Value("${jhipster.clientApp.name}")
+    private String applicationName;
 
     /*
      * Define answers for each given category.
@@ -169,8 +179,8 @@ public class ChatResource {
     }
 
     @PostMapping("/chat")
-    public Mess save(@RequestBody Mess mess) throws FileNotFoundException, IOException, InterruptedException {
-        DoccatModel model = trainCategorizerModel();
+    public Mess save(@RequestBody String string) throws FileNotFoundException, IOException, InterruptedException {
+        /*DoccatModel model = trainCategorizerModel();
         String[] sentences = breakSentences(mess.getContenu());
 
         String answer = "";
@@ -193,12 +203,14 @@ public class ChatResource {
             answer = answer + " " + questionAnswer.get(category);
 
             // If category conversation-complete, we will end chat conversation.
-            /*if ("conversation-complete".equals(category)) {
-                conversationComplete = true;
-            }*/
+            //if ("conversation-complete".equals(category)) {
+              //  conversationComplete = true;
+            //}
             mess.setContenu(answer);
-        }
-
+        }*/
+        log.debug("HEEEEEE : {}" + string);
+        Mess mess = new Mess();
+        mess.setContenu(string);
         return mess;
     }
 }

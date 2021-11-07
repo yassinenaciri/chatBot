@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { Message, SendMessageEvent, User } from '@progress/kendo-angular-conversational-ui';
-import { EvenementService } from './evenement.service';
+import { ChatService } from './evenement.service';
 import { Mess } from './message';
+import { async, from, merge, Observable, Subject } from 'rxjs';
+import { map, scan } from 'rxjs/operators';
 
 const bot: User = {
   id: 0,
@@ -19,55 +21,49 @@ const hello: Message = {
 @Component({
   selector: 'jhi-chat-component',
   styleUrls: ['../../../../../node_modules/bootstrap/dist/css/bootstrap.min.css'],
-  template: ` <kendo-chat [messages]="feed" [user]="user" (sendMessage)="sendMessage($event)"></kendo-chat> `,
+  template: ` <kendo-chat [messages]="messages" [user]="user" (sendMessage)="sendMessage($event)"></kendo-chat> `,
 })
 export class ChatComponent {
-  public feed: Message[] = [hello];
-  public readonly user: User = user;
-  public readonly bot: User = bot;
-  currentIndex = -1;
-  title = '';
-  contenu!: string;
+  constructor(private svc: ChatService) {}
+  public readonly user: User = {
+    id: 1,
+  };
 
-  constructor(private evenementService: EvenementService) {}
+  public readonly bot: User = {
+    id: 0,
+  };
 
-  /*ngOnInit(): void {
-    this.retrieveEvenements();
-  }*/
-
-  /*retrieveEvenements(): void {
-    this.evenementService.getAll()
-      .subscribe(
-        data => {
-          this.evenements = data;
-          console.log(data);
-        },
-        error => {
-          console.log(error);
-        });
-  }//
-
-  setActiveEvenement(evenement: Evenement, index: number): void {
-    this.currentEvent = evenement;
-    this.currentIndex = index;
-  }*/
+  private local: Subject<Message> = new Subject<Message>();
+  // Merge local and remote messages into a single stream
+  public feed: Observable<Message[]> = merge(
+    from([hello]),
+    this.local,
+    this.svc.responses.pipe(
+      map(
+        (response: string): Message => ({
+          author: this.bot,
+          text: response,
+        })
+      )
+    )
+  ).pipe(
+    // ... and emit an array of all messages
+    scan((acc: Message[], x: Message) => [...acc, x], [])
+  );
 
   public sendMessage(e: SendMessageEvent): void {
-    //this.evenementService.create(`${e.message.text}`)
+    this.local.next(e.message);
 
-    //console.log(e.message.text)
-    this.evenementService.create(new Mess(e.message.text)).subscribe(data => {
-      //console.log(typeof data.contenu)
-      this.contenu = data.contenu!;
+    this.local.next({
+      author: this.bot,
+      typing: true,
     });
-    //this.mess.contenu=e.message.text!;
-    //console.log(this.mess.contenu)
-
-    const echo: Message = {
-      author: bot,
-      text: `"${this.contenu}"`,
-    };
-
-    this.feed = [...this.feed, e.message, echo];
+    this.feed.pipe();
+    this.svc.submit(e.message.text != undefined ? e.message.text : '');
+    this.feed.subscribe(va => {
+      this.messages = this.messages.concat(va.filter(item => this.messages.indexOf(item) < 0));
+    });
   }
+
+  public messages: Message[] = [];
 }

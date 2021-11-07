@@ -5,7 +5,20 @@ import { takeUntil } from 'rxjs/operators';
 
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
+import { Message, SendMessageEvent, User } from '@progress/kendo-angular-conversational-ui';
 
+const bot: User = {
+  id: 0,
+};
+
+const user: User = {
+  id: 1,
+};
+
+const hello: Message = {
+  text: 'Hello!',
+  author: bot,
+};
 @Component({
   selector: 'jhi-home',
   templateUrl: './home.component.html',
@@ -14,10 +27,19 @@ import { Account } from 'app/core/auth/account.model';
 export class HomeComponent implements OnInit, OnDestroy {
   account: Account | null = null;
 
+  public feed: Message[] = [hello];
+  public readonly user: User = user;
+  public readonly bot: User = bot;
   private readonly destroy$ = new Subject<void>();
-
   constructor(private accountService: AccountService, private router: Router) {}
+  public sendMessage(e: SendMessageEvent): void {
+    const echo: Message = {
+      author: bot,
+      text: `You said: `,
+    };
 
+    this.feed = [...this.feed, e.message, echo];
+  }
   ngOnInit(): void {
     this.accountService
       .getAuthenticationState()
