@@ -2,16 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Mess } from './message';
+import { ApplicationConfigService } from '../core/config/application-config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EvenementService {
-  private baseUrl: string = 'http://localhost:8080/home/';
+  protected baseUrl = this.applicationConfigService.getEndpointFor('api/chat');
+  private baseUrl1 = 'http://localhost:8080/api/chat/';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
-  create(mess: Mess) {
+  create(mess: Mess): Observable<Mess> {
     //console.log(data)
     return this.http.post<Mess>(this.baseUrl, mess);
   }

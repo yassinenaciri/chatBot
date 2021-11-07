@@ -17,7 +17,8 @@ const hello: Message = {
 };
 
 @Component({
-  selector: 'app-root',
+  selector: 'jhi-chat-component',
+  styleUrls: ['../../../../../node_modules/bootstrap/dist/css/bootstrap.min.css'],
   template: ` <kendo-chat [messages]="feed" [user]="user" (sendMessage)="sendMessage($event)"></kendo-chat> `,
 })
 export class ChatComponent {
@@ -30,9 +31,9 @@ export class ChatComponent {
 
   constructor(private evenementService: EvenementService) {}
 
-  ngOnInit(): void {
-    //this.retrieveEvenements();
-  }
+  /*ngOnInit(): void {
+    this.retrieveEvenements();
+  }*/
 
   /*retrieveEvenements(): void {
     this.evenementService.getAll()
@@ -51,15 +52,13 @@ export class ChatComponent {
     this.currentIndex = index;
   }*/
 
-  public async sendMessage(e: SendMessageEvent) {
+  public sendMessage(e: SendMessageEvent): void {
     //this.evenementService.create(`${e.message.text}`)
 
     //console.log(e.message.text)
-    await this.evenementService.create(new Mess(e.message.text)).subscribe(data => {
-      console.log(data.contenu!);
+    this.evenementService.create(new Mess(e.message.text)).subscribe(data => {
       //console.log(typeof data.contenu)
       this.contenu = data.contenu!;
-      console.log(this.contenu);
     });
     //this.mess.contenu=e.message.text!;
     //console.log(this.mess.contenu)

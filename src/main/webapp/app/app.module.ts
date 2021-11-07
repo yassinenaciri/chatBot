@@ -28,15 +28,16 @@ import { UtilisateurComponent } from './entities/utilisateur/list/utilisateur.co
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ChatModule } from '@progress/kendo-angular-conversational-ui';
 import { ChatComponent } from './chatBot/chat.component';
+import { chatModule } from './chatBot/chat.module';
 
 @NgModule({
   imports: [
-    BrowserModule,
     BrowserModule,
     BrowserAnimationsModule,
     ChatModule,
     SharedModule,
     HomeModule,
+    chatModule,
     EntityRoutingModule,
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: false }),
