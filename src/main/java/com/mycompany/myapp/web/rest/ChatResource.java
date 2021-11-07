@@ -54,7 +54,9 @@ public class ChatResource {
     private static DoccatModel trainCategorizerModel() throws FileNotFoundException, IOException {
         // faq-categorizer.txt is a custom training data with categories as per our chat
         // requirements.
-        InputStreamFactory inputStreamFactory = new MarkableFileInputStreamFactory(new File("faq-categorizer.txt"));
+        InputStreamFactory inputStreamFactory = new MarkableFileInputStreamFactory(
+            new File("src/main/java/com/mycompany/faq-categorizer.txt")
+        );
         ObjectStream<String> lineStream = new PlainTextByLineStream(inputStreamFactory, StandardCharsets.UTF_8);
         ObjectStream<DocumentSample> sampleStream = new DocumentSampleStream(lineStream);
 
@@ -99,7 +101,7 @@ public class ChatResource {
     private static String[] breakSentences(String data) throws FileNotFoundException, IOException {
         // Better to read file once at start of program & store model in instance
         // variable. but keeping here for simplicity in understanding.
-        try (InputStream modelIn = new FileInputStream("en-sent.bin")) {
+        try (InputStream modelIn = new FileInputStream("src/main/java/com/mycompany/en-sent.bin")) {
             SentenceDetectorME myCategorizer = new SentenceDetectorME(new SentenceModel(modelIn));
 
             String[] sentences = myCategorizer.sentDetect(data);
@@ -121,7 +123,7 @@ public class ChatResource {
     private static String[] tokenizeSentence(String sentence) throws FileNotFoundException, IOException {
         // Better to read file once at start of program & store model in instance
         // variable. but keeping here for simplicity in understanding.
-        try (InputStream modelIn = new FileInputStream("en-token.bin")) {
+        try (InputStream modelIn = new FileInputStream("src/main/java/com/mycompany/en-token.bin")) {
             // Initialize tokenizer tool
             TokenizerME myCategorizer = new TokenizerME(new TokenizerModel(modelIn));
 
@@ -144,7 +146,7 @@ public class ChatResource {
     private static String[] detectPOSTags(String[] tokens) throws IOException {
         // Better to read file once at start of program & store model in instance
         // variable. but keeping here for simplicity in understanding.
-        try (InputStream modelIn = new FileInputStream("en-pos-maxent.bin")) {
+        try (InputStream modelIn = new FileInputStream("src/main/java/com/mycompany/en-pos-maxent.bin")) {
             // Initialize POS tagger tool
             POSTaggerME myCategorizer = new POSTaggerME(new POSModel(modelIn));
 
@@ -168,7 +170,7 @@ public class ChatResource {
     private static String[] lemmatizeTokens(String[] tokens, String[] posTags) throws InvalidFormatException, IOException {
         // Better to read file once at start of program & store model in instance
         // variable. but keeping here for simplicity in understanding.
-        try (InputStream modelIn = new FileInputStream("en-lemmatizer.bin")) {
+        try (InputStream modelIn = new FileInputStream("src/main/java/com/mycompany/en-lemmatizer.bin")) {
             // Tag sentence.
             LemmatizerME myCategorizer = new LemmatizerME(new LemmatizerModel(modelIn));
             String[] lemmaTokens = myCategorizer.lemmatize(tokens, posTags);
@@ -180,8 +182,9 @@ public class ChatResource {
 
     @PostMapping("/chat")
     public Mess save(@RequestBody String string) throws FileNotFoundException, IOException, InterruptedException {
-        /*DoccatModel model = trainCategorizerModel();
-        String[] sentences = breakSentences(mess.getContenu());
+        DoccatModel model = trainCategorizerModel();
+
+        String[] sentences = breakSentences(string);
 
         String answer = "";
         //boolean conversationComplete = false;
@@ -201,16 +204,13 @@ public class ChatResource {
 
             // Get predefined answer from given category & add to answer.
             answer = answer + " " + questionAnswer.get(category);
-
             // If category conversation-complete, we will end chat conversation.
             //if ("conversation-complete".equals(category)) {
-              //  conversationComplete = true;
+            //  conversationComplete = true;
             //}
-            mess.setContenu(answer);
-        }*/
-        log.debug("HEEEEEE : {}" + string);
+        }
         Mess mess = new Mess();
-        mess.setContenu(string);
+        mess.setContenu(answer);
         return mess;
     }
 }

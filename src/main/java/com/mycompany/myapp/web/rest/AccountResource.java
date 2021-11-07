@@ -4,6 +4,7 @@ import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.security.SecurityUtils;
 import com.mycompany.myapp.service.MailService;
 import com.mycompany.myapp.service.UserService;
+import com.mycompany.myapp.service.UtilisateurService;
 import com.mycompany.myapp.service.dto.AdminUserDTO;
 import com.mycompany.myapp.service.dto.PasswordChangeDTO;
 import com.mycompany.myapp.service.dto.UserDTO;
@@ -13,6 +14,7 @@ import com.mycompany.myapp.web.rest.vm.ManagedUserVM;
 import java.security.Principal;
 import java.util.Objects;
 import javax.validation.Valid;
+import jdk.jshell.execution.Util;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +44,18 @@ public class AccountResource {
     private final UserService userService;
 
     private final MailService mailService;
+    private final UtilisateurService utilisateurService;
 
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
+    public AccountResource(
+        UserRepository userRepository,
+        UserService userService,
+        MailService mailService,
+        UtilisateurService utilisateurService
+    ) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
+        this.utilisateurService = utilisateurService;
     }
 
     /**
