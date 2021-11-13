@@ -1,15 +1,10 @@
 <div class="row justify-content-center">
   <div class="col-8">
     <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="jhi-tache-heading" data-cy="TacheCreateUpdateHeading">Create or edit a Tache</h2>
+      <h2 id="jhi-tache-heading" data-cy="TacheCreateUpdateHeading">Create or edit an event</h2>
 
       <div>
         <jhi-alert-error></jhi-alert-error>
-
-        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
-          <label class="form-control-label" for="field_id">ID</label>
-          <input type="text" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
 
         <div class="form-group">
           <label class="form-control-label" for="field_intitule">Intitule</label>
@@ -62,21 +57,6 @@
               placeholder="YYYY-MM-DD HH:mm"
             />
           </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" for="field_utilisateur">Utilisateur</label>
-          <select class="form-control" id="field_utilisateur" data-cy="utilisateur" name="utilisateur" formControlName="utilisateur">
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="
-                utilisateurOption.id === editForm.get('utilisateur')!.value?.id ? editForm.get('utilisateur')!.value : utilisateurOption
-              "
-              *ngFor="let utilisateurOption of utilisateursSharedCollection; trackBy: trackUtilisateurById"
-            >
-              {{ utilisateurOption.nomComplet }}
-            </option>
-          </select>
         </div>
       </div>
 

@@ -10,10 +10,6 @@
       <jhi-alert></jhi-alert>
 
       <dl class="row-md jh-entity-details">
-        <dt><span>ID</span></dt>
-        <dd>
-          <span>{{ tache.id }}</span>
-        </dd>
         <dt><span>Intitule</span></dt>
         <dd>
           <span>{{ tache.intitule }}</span>
@@ -29,9 +25,7 @@
         <dt><span>Date Fin</span></dt>
         <dd>
           <span>{{ tache.dateFin | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span>Utilisateur</span></dt>
-        <dd>
+
           <div *ngIf="tache.utilisateur">
             <a [routerLink]="['/utilisateur', tache.utilisateur?.id, 'view']">{{ tache.utilisateur?.nomComplet }}</a>
           </div>
