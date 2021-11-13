@@ -19,6 +19,7 @@ public final class SecurityUtils {
      *
      * @return the login of the current user.
      */
+
     public static Mono<String> getCurrentUserLogin() {
         return ReactiveSecurityContextHolder
             .getContext()

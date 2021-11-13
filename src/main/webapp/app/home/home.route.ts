@@ -7,6 +7,6 @@ export const HOME_ROUTE: Route = {
   path: '',
   component: ChatComponent,
   data: {
-    pageTitle: 'Welcome, Java Hipster!',
+    pageTitle: '',
   },
 };

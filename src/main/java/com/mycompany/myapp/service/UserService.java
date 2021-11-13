@@ -6,6 +6,7 @@ import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.domain.Utilisateur;
 import com.mycompany.myapp.repository.AuthorityRepository;
 import com.mycompany.myapp.repository.UserRepository;
+import com.mycompany.myapp.repository.UtilisateurRepository;
 import com.mycompany.myapp.security.AuthoritiesConstants;
 import com.mycompany.myapp.security.SecurityUtils;
 import com.mycompany.myapp.service.dto.AdminUserDTO;
@@ -40,17 +41,20 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
 
     private final UtilisateurService utilisateurService;
+    private final UtilisateurRepository utilisateurRepository;
 
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        UtilisateurService utilisateurService
+        UtilisateurService utilisateurService,
+        UtilisateurRepository utilisateurRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.utilisateurService = utilisateurService;
+        this.utilisateurRepository = utilisateurRepository;
     }
 
     public Mono<User> activateRegistration(String key) {
@@ -101,6 +105,9 @@ public class UserService {
     }
 
     public Mono<User> registerUser(AdminUserDTO userDTO, String password) {
+        Utilisateur utilisateur = new Utilisateur();
+        utilisateur.setNomComplet("yassine");
+        utilisateurRepository.save(utilisateur);
         return userRepository
             .findOneByLogin(userDTO.getLogin().toLowerCase())
             .flatMap(
@@ -142,10 +149,7 @@ public class UserService {
                         newUser.setActivated(false);
                         // new user gets registration key
                         newUser.setActivationKey(RandomUtil.generateActivationKey());
-                        Utilisateur newUtilisateur = new Utilisateur();
-                        newUtilisateur.setCompte(newUser);
-                        newUtilisateur.setNomComplet(newUser.getFirstName() + " " + newUser.getLastName());
-                        utilisateurService.save(newUtilisateur);
+
                         return newUser;
                     }
                 )
@@ -159,7 +163,18 @@ public class UserService {
                         .thenReturn(newUser)
                         .doOnNext(user -> user.setAuthorities(authorities))
                         .flatMap(this::saveUser)
-                        .doOnNext(user -> log.debug("Created Information for User: {}", user));
+                        .doOnNext(
+                            user -> {
+                                Utilisateur newUtilisateur = new Utilisateur();
+
+                                newUtilisateur.setNomComplet(user.getFirstName() + " " + user.getLastName());
+
+                                utilisateurService.save(newUtilisateur);
+                                newUtilisateur.setCompte(user);
+                                utilisateurService.save(newUtilisateur);
+                                log.debug("Created Information for U: {}", user);
+                            }
+                        );
                 }
             );
     }

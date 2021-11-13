@@ -1,6 +1,6 @@
 import { Observable, Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Mess } from './message';
 import { ApplicationConfigService } from '../core/config/application-config.service';
 

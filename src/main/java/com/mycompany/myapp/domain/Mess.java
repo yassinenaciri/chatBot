@@ -4,6 +4,10 @@ public class Mess {
 
     private String contenu;
 
+    public Mess(String a) {
+        contenu = a;
+    }
+
     public String getContenu() {
         return contenu;
     }

@@ -39,6 +39,19 @@ public class Tache implements Serializable {
     @JsonIgnoreProperties(value = { "compte", "taches" }, allowSetters = true)
     private Utilisateur utilisateur;
 
+    @DBRef
+    @Field("user")
+    @JsonIgnoreProperties(value = { "taches" }, allowSetters = true)
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public String getId() {

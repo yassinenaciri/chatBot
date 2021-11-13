@@ -2,12 +2,12 @@ package com.mycompany.myapp.web.rest;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.mycompany.myapp.domain.Mess;
-import com.mycompany.myapp.domain.Tache;
+import com.mycompany.myapp.domain.Utilisateur;
+import com.mycompany.myapp.repository.UtilisateurRepository;
+import com.mycompany.myapp.service.ChatService;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import opennlp.tools.doccat.*;
 import opennlp.tools.lemmatizer.LemmatizerME;
@@ -20,15 +20,11 @@ import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.util.*;
 import opennlp.tools.util.model.ModelUtil;
-import org.apache.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import tech.jhipster.web.util.HeaderUtil;
 
 @RestController
 @RequestMapping("/api")
@@ -36,6 +32,9 @@ public class ChatResource {
 
     private final Logger log = LoggerFactory.getLogger(TacheResource.class);
     private static Map<String, String> questionAnswer = new HashMap<>();
+
+    private final UtilisateurRepository utilisateurRepository;
+    private final ChatService chatService;
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
@@ -49,6 +48,11 @@ public class ChatResource {
         questionAnswer.put("price-inquiry", "Tommorow at 5:am you have meeting with yacine ennaciri ");
         questionAnswer.put("conversation-continue", "What else can I help you with?");
         questionAnswer.put("conversation-complete", "Nice chatting with you. Bbye.");
+    }
+
+    public ChatResource(UtilisateurRepository utilisateurRepository, ChatService chatService) {
+        this.utilisateurRepository = utilisateurRepository;
+        this.chatService = chatService;
     }
 
     private static DoccatModel trainCategorizerModel() throws FileNotFoundException, IOException {
@@ -181,7 +185,7 @@ public class ChatResource {
     }
 
     @PostMapping("/chat")
-    public Mess save(@RequestBody String string) throws FileNotFoundException, IOException, InterruptedException {
+    public Mono<Mess> save(@RequestBody String string) throws FileNotFoundException, IOException, InterruptedException {
         DoccatModel model = trainCategorizerModel();
 
         String[] sentences = breakSentences(string);
@@ -209,8 +213,13 @@ public class ChatResource {
             //  conversationComplete = true;
             //}
         }
-        Mess mess = new Mess();
-        mess.setContenu(answer);
-        return mess;
+
+        return chatService
+            .getAllTaches()
+            .flatMap(
+                a -> {
+                    return Mono.just(new Mess(a));
+                }
+            );
     }
 }
