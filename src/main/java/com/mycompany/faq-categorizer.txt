@@ -1,5 +1,6 @@
-greeting	 hi hi. hello how are you ? hey . hows it going good morning good evening good afternoon howdy 
+greeting	 hi hi. hello how are you ? hey . hows it going good morning good evening good afternoon howdy
 conversation-continue	 ok wow great oh is it ? oh ohh Thats great Good Really hmm lemme think hm hmmm hmmmmm
-price-inquiry	 When ? What's the time ?
-product-inquiry	 What are my events ? What do I have ? What about my meetings ? What about my tasks ? What this product is all about? .
+events-inquiry	 What are my events ? .
+meetings-inquiry	 i want to know my meetings?.
+tasks-inquiry	 What tasks do i have?.
 conversation-complete	 Thanks done that's all thats it. thats it I am done Thank you for information Thank. thanks. thank you. thanks nothing else thats it.

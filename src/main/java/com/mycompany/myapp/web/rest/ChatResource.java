@@ -7,8 +7,10 @@ import com.mycompany.myapp.repository.UtilisateurRepository;
 import com.mycompany.myapp.service.ChatService;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 import opennlp.tools.doccat.*;
 import opennlp.tools.lemmatizer.LemmatizerME;
 import opennlp.tools.lemmatizer.LemmatizerModel;
@@ -44,8 +46,8 @@ public class ChatResource {
      */
     static {
         questionAnswer.put("greeting", "Hello, how can I help you?");
-        questionAnswer.put("product-inquiry", "The differents events that you have are meetings and tasks.");
-        questionAnswer.put("price-inquiry", "Tommorow at 5:am you have meeting with yacine ennaciri ");
+        //questionAnswer.put("product-inquiry", "The differents events that you have are meetings and tasks.");
+        //questionAnswer.put("price-inquiry", "Tommorow at 5:am you have meeting with yacine ennaciri ");
         questionAnswer.put("conversation-continue", "What else can I help you with?");
         questionAnswer.put("conversation-complete", "Nice chatting with you. Bbye.");
     }
@@ -184,6 +186,41 @@ public class ChatResource {
         }
     }
 
+    private boolean isNumeric(String string) {
+        char[] ch = new char[string.length()];
+
+        // Copy character by character into array
+        for (int i = 0; i < string.length(); i++) {
+            ch[i] = string.charAt(i);
+        }
+
+        // Printing content of array
+        for (char c : ch) {
+            if (Character.isDigit(c) == true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Instant extractBeginDate(String string) {
+        String between = "between";
+        String and = "and";
+        int indexAt = string.indexOf(between);
+        int indexNotes = string.indexOf(and);
+        String extracted = string.substring(indexAt + between.length(), indexNotes);
+        return Instant.parse(extracted.strip());
+    }
+
+    private Instant extractEndDate(String string) {
+        String and = "and";
+        String question = "?";
+        int indexAt = string.indexOf(and);
+        int indexNotes = string.indexOf(question);
+        String extracted = string.substring(indexAt + and.length(), indexNotes);
+        return Instant.parse(extracted.strip());
+    }
+
     @PostMapping("/chat")
     public Mono<Mess> save(@RequestBody String string) throws FileNotFoundException, IOException, InterruptedException {
         DoccatModel model = trainCategorizerModel();
@@ -191,6 +228,7 @@ public class ChatResource {
         String[] sentences = breakSentences(string);
 
         String answer = "";
+        String cat = "";
         //boolean conversationComplete = false;
         for (String sentence : sentences) {
             // Separate words from each sentence using tokenizer.
@@ -205,6 +243,7 @@ public class ChatResource {
             // Determine BEST category using lemmatized tokens used a mode that we trained
             // at start.
             String category = detectCategory(model, lemmas);
+            cat = cat + detectCategory(model, lemmas);
 
             // Get predefined answer from given category & add to answer.
             answer = answer + " " + questionAnswer.get(category);
@@ -213,13 +252,51 @@ public class ChatResource {
             //  conversationComplete = true;
             //}
         }
+        if (cat.contains("greeting") || cat.contains("conversation-continue") || cat.contains("conversation-complete")) {
+            return Mono.just(new Mess(answer));
+        } else if (cat.contains("events-inquiry")) {
+            if (isNumeric(string)) {
+                return chatService
+                    .getTachesBetween(extractBeginDate(string), extractEndDate(string))
+                    .flatMap(
+                        a -> {
+                            return Mono.just(new Mess(a));
+                        }
+                    );
+            } else {
+                return chatService
+                    .getAllTaches()
+                    .flatMap(
+                        a -> {
+                            return Mono.just(new Mess(a));
+                        }
+                    );
+            }
+        } else if (cat.contains("meetings-inquiry")) {
+            return chatService
+                .getMeetings()
+                .flatMap(
+                    a -> {
+                        return Mono.just(new Mess(a));
+                    }
+                );
+        } else if (cat.contains("tasks-inquiry")) {
+            return chatService
+                .getTasks()
+                .flatMap(
+                    a -> {
+                        return Mono.just(new Mess(a));
+                    }
+                );
+        }
 
-        return chatService
+        /*chatService
             .getAllTaches()
             .flatMap(
                 a -> {
                     return Mono.just(new Mess(a));
                 }
-            );
+            );*/
+        return Mono.just(new Mess(""));
     }
 }

@@ -14,4 +14,5 @@ import reactor.core.publisher.Flux;
 @Repository
 public interface TacheRepository extends ReactiveMongoRepository<Tache, String> {
     Flux<Tache> findAllByUser(User user);
+    //Flux<Tache> findAllByIntitule(String intitule);
 }
